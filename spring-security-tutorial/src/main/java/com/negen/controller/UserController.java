@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.negen.common.ServerResponse;
 import com.negen.entity.User;
 import com.negen.service.IUserService;
+
 @RestController
 public class UserController {
 
@@ -15,20 +17,20 @@ public class UserController {
 	IUserService userService;
 	
 	@RequestMapping(value = "/user/login")
-	public String userLogin() {
-		return "账号未登录";
+	public ServerResponse userLogin() {
+		return ServerResponse.buildFail("账号未登录");
 	}
 	
 	@RequestMapping(value = "/user/register")
-	public String userReg(@RequestBody User user) {
+	public ServerResponse userReg(@RequestBody User user) {
 		userService.addUser(user);
-		return null;
+		return ServerResponse.buildSuccess("注册成功");
 	}
 	
 	
 	@PreAuthorize("hasAuthority('create')")
 	@RequestMapping(value = "/hello")
-	public String hello() {
-		return "hahaha";
+	public ServerResponse hello() {
+		return ServerResponse.buildSuccess("ok", "hhahah");
 	}
 }

@@ -63,9 +63,8 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 			@Override
 			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 				Authentication authentication) throws IOException, ServletException {
-				JSONObject resultJson = new JSONObject();
-				ServerResponse serverResponse = new ServerResponse<JSONObject>("200", "登录成功", null);
-				PrintUtil.print(response, serverResponse.toString());
+				PrintUtil.print(response, 
+						ServerResponse.buildSuccess("登录成功").toString());
 			}};
 	}
 	
@@ -77,8 +76,8 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 			@Override
 			public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 					AuthenticationException exception) throws IOException, ServletException {
-				ServerResponse serverResponse = new ServerResponse<JSONObject>("300", "登录失败", null);
-				PrintUtil.print(response, serverResponse.toString());
+				PrintUtil.print(response, 
+						ServerResponse.buildSuccess("登录失败").toString());
 			}
 		};
 	}
