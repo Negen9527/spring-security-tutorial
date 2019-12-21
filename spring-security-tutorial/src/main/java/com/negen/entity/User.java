@@ -30,7 +30,7 @@ import lombok.ToString;
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int id;
+	long id;
 	String userName;
 	String password;
 	String salt;

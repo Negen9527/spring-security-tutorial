@@ -30,7 +30,7 @@ import lombok.NoArgsConstructor;
 public class Role {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	int id;
+	long id;
 	String roleName;
 	@OneToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
 	@JoinColumn(name = "role_id")
