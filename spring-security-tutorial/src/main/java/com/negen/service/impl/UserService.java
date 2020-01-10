@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.negen.common.ResponseEnum;
 import com.negen.common.RoleEnum;
 import com.negen.common.ServerResponse;
 import com.negen.entity.Permission;
@@ -34,7 +35,8 @@ public class UserService implements IUserService{
 		User existUser = userRepository.findByUserName(user.getUserName());
 		if(null != existUser) {
 			//用户名已存在
-			return ServerResponse.buildSuccess("用户名已存在");
+			return ServerResponse.getInstance()
+					.responseEnum(ResponseEnum.USERNAME_EXSIT);
 		}
 		//初始化角色为 user
 		List<Permission> permissions = new ArrayList<Permission>();
@@ -47,7 +49,8 @@ public class UserService implements IUserService{
 		user.setRoles(roles);
 		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 		userRepository.save(user);
-		return ServerResponse.buildSuccess("注册成功");
+		return ServerResponse.getInstance()
+				.responseEnum(ResponseEnum.REGISTE_SUCCESS);
 	}
 
 	@Override
@@ -62,7 +65,9 @@ public class UserService implements IUserService{
 			jsonUser.put("role", user.getRoles().get(0).getRoleName());
 			jsonUserArray.add(jsonUser);
 		}
-		return ServerResponse.buildSuccess("获取成功", jsonUserArray);
+		return ServerResponse.getInstance()
+				.responseEnum(ResponseEnum.GET_SUCCESS)
+				.data(jsonUserArray);
 	}
 
 	@Transactional
@@ -70,7 +75,8 @@ public class UserService implements IUserService{
 	public ServerResponse modifyUserRoleAndPermission(long userid, String roleName) {
 		User user  = userRepository.findById(userid).get();
 		if(roleName.equals(user.getRoles().get(0).getRoleName())) {
-			return ServerResponse.buildSuccess("修改成功");
+			return ServerResponse.getInstance()
+					.responseEnum(ResponseEnum.UPDATE_SUCCESS);
 		}
 		for (Role role : user.getRoles()) {
 			for (Permission permission : role.getPermissions()) {
@@ -85,7 +91,8 @@ public class UserService implements IUserService{
 		role.setPermissions(roleEnum.getValue());
 		roles.add(role);
 		user.setRoles(roles);
-		return ServerResponse.buildSuccess("修改成功");
+		return ServerResponse.getInstance()
+				.responseEnum(ResponseEnum.UPDATE_SUCCESS);
 	}
 	
 	

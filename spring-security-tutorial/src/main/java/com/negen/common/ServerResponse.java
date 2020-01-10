@@ -1,36 +1,38 @@
 package com.negen.common;
 
 import com.alibaba.fastjson.JSONObject;
-
 import lombok.Data;
 @Data
-public class ServerResponse<T> {
-	int code;
-	String msg;
-	T data;
+public class ServerResponse {
+	Integer code;       //响应状态码
+	String msg;			//响应信息
+	Object data;		//响应数据
 	
-	public ServerResponse (int code, String msg, T data) {
-		this.code = code;
-		this.msg = msg;
-		this.data = data;
+	public static  ServerResponse getInstance() {
+		return new ServerResponse();
 	}
-	public ServerResponse (int code, String msg) {
+	
+	public  ServerResponse code(Integer code){
 		this.code = code;
-		this.msg = msg;
+		return (ServerResponse) this;
+	}
+	
+	public  ServerResponse message(String message){
+		this.msg = message;
+		return (ServerResponse) this;
+	}
+	
+	public  ServerResponse data(Object data){
+		this.data = data;
+		return (ServerResponse) this;
+	}
+	
+	public  ServerResponse responseEnum(ResponseEnum responseEnum){
+		this.code = responseEnum.code;
+		this.msg = responseEnum.message;
+		return (ServerResponse) this;
 	}
 
-	public static <T> ServerResponse<T> buildSuccess(String msg) {
-		return new ServerResponse<T>(200, msg);
-	}
-	
-	public static <T> ServerResponse<T> buildSuccess(String msg, T data) {
-		return new ServerResponse<T>(200, msg, data);
-	}
-	
-	public static <T> ServerResponse<T> buildFail(String msg) {
-		return new ServerResponse<T>(300, msg);
-	}
-	
 	@Override
 	public String toString() {
 		JSONObject resultJson = new JSONObject();
@@ -40,9 +42,8 @@ public class ServerResponse<T> {
 		return resultJson.toString();
 	}
 
-	
-	
-	
-	
-	
+	//测试
+	public static void main(String[] args) {
+		System.out.println(ServerResponse.getInstance().responseEnum(ResponseEnum.LOGIN_SUCCESS));
+	}
 }

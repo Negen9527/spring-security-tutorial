@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import com.alibaba.fastjson.JSONObject;
+import com.negen.common.ResponseEnum;
 import com.negen.common.ServerResponse;
 import com.negen.service.impl.BookUserDetailsService;
 import com.negen.utils.PrintUtil;
@@ -64,7 +65,8 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 				Authentication authentication) throws IOException, ServletException {
 				PrintUtil.print(response, 
-						ServerResponse.buildSuccess("登录成功").toString());
+						ServerResponse.getInstance()
+						.responseEnum(ResponseEnum.LOGIN_SUCCESS).toString());
 			}};
 	}
 	
@@ -77,7 +79,8 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 			public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 					AuthenticationException exception) throws IOException, ServletException {
 				PrintUtil.print(response, 
-						ServerResponse.buildSuccess("登录失败").toString());
+						ServerResponse.getInstance()
+						.responseEnum(ResponseEnum.LOGIN_FAILED).toString());
 			}
 		};
 	}

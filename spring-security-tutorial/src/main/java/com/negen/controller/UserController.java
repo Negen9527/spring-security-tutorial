@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.negen.common.ResponseEnum;
 import com.negen.common.ServerResponse;
 import com.negen.entity.User;
 import com.negen.service.IUserService;
@@ -19,7 +20,8 @@ public class UserController {
 	
 	@RequestMapping(value = "/user/login")
 	public ServerResponse userLogin() {
-		return ServerResponse.buildFail("账号未登录");
+		return ServerResponse.getInstance()
+				.responseEnum(ResponseEnum.ACCOUT_NOT_LOGIN);
 	}
 	
 	@RequestMapping(value = "/user/register")
@@ -40,7 +42,8 @@ public class UserController {
 		String roleName = obj.getString("roleName");
 		if(null == userid || null == roleName
 				|| 0 == userid || "".equals(roleName))
-			return ServerResponse.buildFail("参数非法");
+			return ServerResponse.getInstance()
+					.responseEnum(ResponseEnum.INVALID_PARAM);
 		return userService.modifyUserRoleAndPermission(userid, roleName);
 	}
 }

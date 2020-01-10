@@ -23,23 +23,4 @@ public class SpringSecurityTutorialApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SpringSecurityTutorialApplication.class, args);
 	}
-	
-	
-
-
-//	public void init() {
-//		//初始化管理员账号
-//		UserService userService = new UserService();
-//		User admin = new User();
-//		List<Role> roles = new ArrayList<Role>();
-//		admin.setUserName("admin");
-//		admin.setPassword("123456");
-//		Role role = new Role();
-//		role.setRoleName(RoleEnum.ROLE_ADMIN.getKey());
-//		role.setPermissions(RoleEnum.ROLE_ADMIN.getValue());
-//		roles.add(role);
-//		admin.setRoles(roles);
-//		userService.addUser(admin);
-//	}
-	
 }
