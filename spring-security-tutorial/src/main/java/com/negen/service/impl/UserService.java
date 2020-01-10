@@ -10,8 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.negen.common.Constant;
+import com.negen.common.Constant.RoleConstant;
 import com.negen.common.ResponseEnum;
-import com.negen.common.RoleEnum;
 import com.negen.common.ServerResponse;
 import com.negen.entity.Permission;
 import com.negen.entity.Role;
@@ -21,6 +22,7 @@ import com.negen.repository.RoleRepository;
 import com.negen.repository.UserRepository;
 import com.negen.service.IUserService;
 @Service
+@Transactional
 public class UserService implements IUserService{
 	@Autowired
 	UserRepository userRepository;
@@ -41,11 +43,14 @@ public class UserService implements IUserService{
 		//初始化角色为 user
 		List<Permission> permissions = new ArrayList<Permission>();
 		List<Role> roles = new ArrayList<Role>();
-		Role role = new Role();
+		Role role = Constant.generateRole(RoleConstant.USER);
 		
-		role.setRoleName(RoleEnum.ROLE_USER.getKey()); 
-		role.setPermissions(RoleEnum.ROLE_USER.getValue());
+//		role.setRoleName(RoleEnum.ROLE_USER.getKey()); 
+//		role.setPermissions(RoleEnum.ROLE_USER.getValue());
+//		roles.add(role);
+
 		roles.add(role);
+		
 		user.setRoles(roles);
 		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 		userRepository.save(user);
@@ -84,11 +89,8 @@ public class UserService implements IUserService{
 			}
 			roleRepository.delete(role);
 		}
-		RoleEnum roleEnum = RoleEnum.getRoleEnum(roleName);
 		List<Role> roles = new ArrayList<Role>();
-		Role role = new Role();
-		role.setRoleName(roleEnum.getKey());
-		role.setPermissions(roleEnum.getValue());
+		Role role = Constant.generateRole(roleName);
 		roles.add(role);
 		user.setRoles(roles);
 		return ServerResponse.getInstance()
