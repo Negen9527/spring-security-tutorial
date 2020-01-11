@@ -26,9 +26,6 @@ public class InitAdmin implements CommandLineRunner{
 		admin.setUserName("admin");
 		admin.setPassword(new BCryptPasswordEncoder().encode("123456"));
 		Role role = Constant.generateRole(RoleConstant.ADMIN);
-//		role.setRoleName(RoleEnum.ROLE_ADMIN.getKey());
-//		role.setPermissions(RoleEnum.ROLE_ADMIN.getValue());
-		
 		roles.add(role);
 		admin.setRoles(roles);
 		userRepository.save(admin);
