@@ -9,24 +9,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import com.alibaba.fastjson.JSONObject;
 import com.negen.common.ResponseEnum;
 import com.negen.common.ServerResponse;
 import com.negen.service.impl.BookUserDetailsService;
 import com.negen.utils.PrintUtil;
-
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -36,9 +35,9 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		System.out.println("AuthenticationManagerBuilder");
-		auth.userDetailsService(bookUserDetailsService)
-		.passwordEncoder(passwordEncoder());
+//		auth.userDetailsService(bookUserDetailsService)
+//		.passwordEncoder(passwordEncoder());
+		auth.authenticationProvider(authenticationProvider());
 	}
 
 	@Override
@@ -55,16 +54,24 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 		.formLogin()
 		.loginPage("/user/login")
 		.loginProcessingUrl("/login")
-		.successHandler(successHandler())
+		.successHandler(authenticationSuccessHandler())
 		.failureHandler(authenticationFailureHandler())
 		.permitAll()
 		;
-//		.anyRequest().permitAll();
 	}
 	
+    @Bean
+   public DaoAuthenticationProvider authenticationProvider() {
+       DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+       provider.setHideUserNotFoundExceptions(false);     //设置是否隐藏 UserNotFoundException
+       provider.setUserDetailsService(bookUserDetailsService);
+       provider.setPasswordEncoder(passwordEncoder());
+       return provider;
+   }
+
 
 	@Bean
-	public AuthenticationSuccessHandler successHandler() {
+	public AuthenticationSuccessHandler authenticationSuccessHandler() {
 		return new AuthenticationSuccessHandler(){
 			@Override
 			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -75,7 +82,6 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 			}};
 	}
 	
-	
 	@Bean
 	public AuthenticationFailureHandler authenticationFailureHandler() {
 		return new AuthenticationFailureHandler() {
@@ -83,13 +89,20 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 			@Override
 			public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 					AuthenticationException exception) throws IOException, ServletException {
+				if (exception instanceof UsernameNotFoundException) {
+					//账号不存在
+					PrintUtil.print(response, 
+							ServerResponse.getInstance()
+							.responseEnum(ResponseEnum.ACCOUNT_NOT_FOUND).toString());
+					return;
+				}
+				//密码错误
 				PrintUtil.print(response, 
 						ServerResponse.getInstance()
 						.responseEnum(ResponseEnum.LOGIN_FAILED).toString());
 			}
 		};
 	}
-	
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {

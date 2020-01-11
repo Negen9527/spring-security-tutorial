@@ -44,13 +44,7 @@ public class UserService implements IUserService{
 		List<Permission> permissions = new ArrayList<Permission>();
 		List<Role> roles = new ArrayList<Role>();
 		Role role = Constant.generateRole(RoleConstant.USER);
-		
-//		role.setRoleName(RoleEnum.ROLE_USER.getKey()); 
-//		role.setPermissions(RoleEnum.ROLE_USER.getValue());
-//		roles.add(role);
-
 		roles.add(role);
-		
 		user.setRoles(roles);
 		user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
 		userRepository.save(user);
@@ -77,7 +71,7 @@ public class UserService implements IUserService{
 
 	@Transactional
 	@Override
-	public ServerResponse modifyUserRoleAndPermission(long userid, String roleName) {
+	public ServerResponse modifyUserRole(long userid, String roleName) {
 		User user  = userRepository.findById(userid).get();
 		if(roleName.equals(user.getRoles().get(0).getRoleName())) {
 			return ServerResponse.getInstance()
@@ -97,7 +91,26 @@ public class UserService implements IUserService{
 				.responseEnum(ResponseEnum.UPDATE_SUCCESS);
 	}
 	
-	
+	@Override
+	public ServerResponse modifyUserPermission(long userid, JSONArray permissionNames) {
+		List<Permission> permissions = null;
+		User user = userRepository.findById(userid).get();
+		if(null != user) {
+			Role role = user.getRoles().get(0);
+			permissionRepository.deleteAll(role.getPermissions());
+			if(permissionNames.size() > 0) {
+				permissions = new ArrayList<Permission>();
+				for (int i = 0; i < permissionNames.size(); i++) {
+					Permission permission = new Permission(permissionNames.get(i).toString());
+					permissions.add(permission);
+				}
+			}
+			role.setPermissions(permissions);
+			userRepository.save(user);
+		}
+		return ServerResponse.getInstance()
+				.responseEnum(ResponseEnum.UPDATE_SUCCESS);
+	}
 	
 	
 }

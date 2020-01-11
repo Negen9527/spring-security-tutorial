@@ -1,5 +1,6 @@
 package com.negen.handler;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -18,6 +19,11 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(Exception.class)
 	public ServerResponse globalExceptionHandler(Exception e) {
 		e.printStackTrace();	//打印错误信息
+		if (e instanceof AccessDeniedException) {
+			return ServerResponse.getInstance()
+					.responseEnum(ResponseEnum.NO_PERMISSION);
+		}
+		
 		return ServerResponse.getInstance()
 				.responseEnum(ResponseEnum.INNER_ERROR);
 	}

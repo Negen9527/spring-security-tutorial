@@ -3,6 +3,8 @@ package com.negen.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,11 +16,10 @@ import com.negen.entity.Role;
 import com.negen.entity.User;
 import com.negen.repository.UserRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Service
-@Slf4j
 public class BookUserDetailsService implements UserDetailsService {
+	private static final Logger log = LoggerFactory.getLogger(BookUserDetailsService.class);
+
 	@Autowired
 	UserRepository userRepository;
 	
@@ -28,6 +29,7 @@ public class BookUserDetailsService implements UserDetailsService {
 		User user = userRepository.findByUserName(username);
 		if(null == user) {
 			//用户不存在
+			log.info("\n用户:"+username+"不存在");
 			throw new UsernameNotFoundException(username);
 		}else {
 			//用户存在
@@ -39,6 +41,7 @@ public class BookUserDetailsService implements UserDetailsService {
 					authorities.add(new SimpleGrantedAuthority(permission.getPermissionName()));
 				}
 			}
+			log.info("\n" + authorities.toString());
 			return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);
 		}
 		

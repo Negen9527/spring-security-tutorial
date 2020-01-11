@@ -13,6 +13,7 @@ public enum ResponseEnum {
 	ACCOUNT_NOT_FOUND(2002, "账号不存在，请先注册"),
 	ACCOUT_NOT_LOGIN(4000, "账号未登录"),
 	INVALID_PARAM(40001, "参数非法"),
+	NO_PERMISSION(40003, "无权操作"),
 	USERNAME_EXSIT(3002, "用户名已存在"),
 	REGISTE_SUCCESS(2000, "注册成功"),
 	UPDATE_SUCCESS(2000, "修改成功"),

@@ -1,5 +1,6 @@
 package com.negen.service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.negen.common.ServerResponse;
 import com.negen.entity.User;
 
@@ -10,5 +11,7 @@ public interface IUserService {
 	//获取所有用户
 	ServerResponse listAllUser();
 	//修改账号角色信息、权限信息
-	ServerResponse modifyUserRoleAndPermission(long userid, String roleName);
+	ServerResponse modifyUserRole(long userid, String roleName);
+	//修改账号权限
+	ServerResponse modifyUserPermission(long userid,JSONArray permissionNames);
 }
