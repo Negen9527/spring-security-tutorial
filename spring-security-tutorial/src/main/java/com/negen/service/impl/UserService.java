@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +72,32 @@ public class UserService implements IUserService{
 				.data(jsonUserArray);
 	}
 
+	@Override
+	public ServerResponse pageableListUser(int page, int size) {
+		JSONObject jsonResultObj = new JSONObject();
+		JSONArray jsonUserArray = new JSONArray();
+		PageRequest pageable =  PageRequest.of(page, size);
+		Page pageResult = userRepository.findAll(pageable);
+		int pageSize = pageResult.getTotalPages();   //总页数
+		long total = pageResult.getTotalElements();  //总记录数/用户数
+		List<User> users = pageResult.getContent();
+		for (User user : users) {
+			JSONObject jsonUser = new JSONObject();
+			jsonUser.put("userid", user.getId());
+			jsonUser.put("username", user.getUserName());
+			jsonUser.put("roleid", user.getRoles().get(0).getId());
+			jsonUser.put("role", user.getRoles().get(0).getRoleName());
+			jsonUserArray.add(jsonUser);
+		}
+		jsonResultObj.put("pageSize", pageSize);
+		jsonResultObj.put("total", total);
+		jsonResultObj.put("userList", jsonUserArray);
+		return ServerResponse.getInstance()
+				.responseEnum(ResponseEnum.GET_SUCCESS)
+				.data(jsonResultObj);
+	}
+	
+	
 	@Transactional
 	@Override
 	public ServerResponse modifyUserRole(long userid, String roleName) {
@@ -78,9 +107,7 @@ public class UserService implements IUserService{
 					.responseEnum(ResponseEnum.UPDATE_SUCCESS);
 		}
 		for (Role role : user.getRoles()) {
-			for (Permission permission : role.getPermissions()) {
-				permissionRepository.delete(permission);
-			}
+			permissionRepository.deleteAll(role.getPermissions());
 			roleRepository.delete(role);
 		}
 		List<Role> roles = new ArrayList<Role>();
@@ -91,6 +118,7 @@ public class UserService implements IUserService{
 				.responseEnum(ResponseEnum.UPDATE_SUCCESS);
 	}
 	
+	@Transactional
 	@Override
 	public ServerResponse modifyUserPermission(long userid, JSONArray permissionNames) {
 		List<Permission> permissions = null;

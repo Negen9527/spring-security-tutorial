@@ -10,8 +10,11 @@ public interface IUserService {
 	ServerResponse addUser(User user);
 	//获取所有用户
 	ServerResponse listAllUser();
+	//分页获取用户
+	ServerResponse pageableListUser(int page, int size);
 	//修改账号角色信息、权限信息
 	ServerResponse modifyUserRole(long userid, String roleName);
 	//修改账号权限
 	ServerResponse modifyUserPermission(long userid,JSONArray permissionNames);
+	
 }

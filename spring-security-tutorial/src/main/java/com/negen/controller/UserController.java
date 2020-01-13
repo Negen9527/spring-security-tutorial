@@ -3,6 +3,7 @@ package com.negen.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +23,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.bytebuddy.implementation.bind.annotation.IgnoreForBinding;
 import springfox.documentation.annotations.ApiIgnore;
+@Api("用户模块")
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -51,6 +53,15 @@ public class UserController {
 		return userService.listAllUser();
 	}
 	
+	@ApiOperation(value = "获取用户列表（分页）")
+	@PreAuthorize("hasAuthority('query')")
+	@GetMapping(value = "/list/{page}/{size}")
+	public ServerResponse pageableUserList(
+			@PathVariable("page")int page, 
+			@PathVariable("size")int size){
+		return userService.pageableListUser(page, size);
+	}
+	
 	@ApiOperation(value = "修改用户角色")
 	@PreAuthorize("hasAuthority('admin')")
 	@PostMapping(value = "/role/modify")
@@ -63,8 +74,6 @@ public class UserController {
 					.responseEnum(ResponseEnum.INVALID_PARAM);
 		return userService.modifyUserRole(userid, roleName);
 	}
-	
-	
 	
 	@ApiOperation(value = "修改用户权限")
 	@PreAuthorize("hasAuthority('admin')")
