@@ -16,5 +16,7 @@ public interface IUserService {
 	ServerResponse modifyUserRole(long userid, String roleName);
 	//修改账号权限
 	ServerResponse modifyUserPermission(long userid,JSONArray permissionNames);
+	//获取账号信息
+	ServerResponse getUserInfo(String token);
 	
 }

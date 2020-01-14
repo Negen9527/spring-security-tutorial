@@ -41,4 +41,9 @@ public class User {
 	@OneToMany(cascade = {CascadeType.ALL} , fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
 	List<Role> roles;
+	
+	String introduction;    //自我简介
+	String avatar;          //头像 
+	String token;           
+	
 }

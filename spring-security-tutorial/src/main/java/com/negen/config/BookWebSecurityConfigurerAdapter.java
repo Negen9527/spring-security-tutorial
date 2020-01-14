@@ -22,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.alibaba.fastjson.JSONObject;
 import com.negen.common.ResponseEnum;
 import com.negen.common.ServerResponse;
 import com.negen.service.impl.BookUserDetailsService;
@@ -42,7 +43,7 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http
+		http.cors().and()
 		.csrf().disable()
 		.authorizeRequests()
 		.antMatchers("/user/register",
@@ -76,9 +77,11 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 			@Override
 			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 				Authentication authentication) throws IOException, ServletException {
+				JSONObject jsonData = new JSONObject();
+				jsonData.put("token", "token");
 				PrintUtil.print(response, 
 						ServerResponse.getInstance()
-						.responseEnum(ResponseEnum.LOGIN_SUCCESS).toString());
+						.responseEnum(ResponseEnum.LOGIN_SUCCESS).data(jsonData).toString());
 			}};
 	}
 	

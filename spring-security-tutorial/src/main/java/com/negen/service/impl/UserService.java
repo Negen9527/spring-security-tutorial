@@ -140,5 +140,17 @@ public class UserService implements IUserService{
 				.responseEnum(ResponseEnum.UPDATE_SUCCESS);
 	}
 	
+	@Override
+	public ServerResponse getUserInfo(String token) {
+		JSONObject resultJson = new JSONObject();
+		JSONArray roles = new JSONArray();
+		roles.add("admin");
+		resultJson.put("roles", roles);
+		resultJson.put("introduction", "introduction");
+		resultJson.put("avatar", "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif");
+		resultJson.put("name", "name");
+		return ServerResponse.getInstance()
+				.responseEnum(ResponseEnum.GET_SUCCESS).data(resultJson);
+	}
 	
 }

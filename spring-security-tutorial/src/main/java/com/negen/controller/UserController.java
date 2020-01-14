@@ -2,11 +2,13 @@ package com.negen.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONArray;
@@ -38,6 +40,13 @@ public class UserController {
 				.responseEnum(ResponseEnum.ACCOUT_NOT_LOGIN);
 	}
 	
+	
+	@PostMapping(value = "/logout")
+	public ServerResponse userLogout() {
+		return ServerResponse.getInstance()
+				.code(20000).data("success");
+	}
+	
 	@ApiOperation(value = "用户注册")
 	@PostMapping(value = "/register")
 	public ServerResponse userReg(
@@ -45,6 +54,13 @@ public class UserController {
 			@RequestBody User user) {
 		return userService.addUser(user);
 	}
+	
+	@ApiOperation(value = "获取用户信息")
+	@GetMapping("/info")
+	public ServerResponse getUserInfo() {
+		return userService.getUserInfo("");
+	}
+	
 	
 	@ApiOperation(value = "获取用户列表")
 	@PreAuthorize("hasAuthority('query')")

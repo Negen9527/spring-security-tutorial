@@ -24,8 +24,6 @@ public class InitAdmin implements CommandLineRunner{
 	@Autowired
 	UserRepository userRepository;
 	
-
-	
 	@Override
 	public void run(String... args) throws Exception {
 		//初始化管理员账号
@@ -37,6 +35,6 @@ public class InitAdmin implements CommandLineRunner{
 		roles.add(role);
 		admin.setRoles(roles);
 		userRepository.save(admin);
-		log.info("》》》初始化超级管理员完成《《《");
+		log.info("\n》》》初始化超级管理员完成《《《");
 	}
 }

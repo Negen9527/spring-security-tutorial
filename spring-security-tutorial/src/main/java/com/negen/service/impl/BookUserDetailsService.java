@@ -27,6 +27,7 @@ public class BookUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		//查找用户是否存在并分配权限
 		User user = userRepository.findByUserName(username);
+
 		if(null == user) {
 			//用户不存在
 			log.info("\n用户:"+username+"不存在");
