@@ -63,6 +63,8 @@ public class UserService implements IUserService{
 			JSONObject jsonUser = new JSONObject();
 			jsonUser.put("userid", user.getId());
 			jsonUser.put("username", user.getUserName());
+			jsonUser.put("avatar", user.getAvatar());
+			jsonUser.put("introduction", user.getIntroduction());
 			jsonUser.put("roleid", user.getRoles().get(0).getId());
 			jsonUser.put("role", user.getRoles().get(0).getRoleName());
 			jsonUserArray.add(jsonUser);
@@ -85,6 +87,8 @@ public class UserService implements IUserService{
 			JSONObject jsonUser = new JSONObject();
 			jsonUser.put("userid", user.getId());
 			jsonUser.put("username", user.getUserName());
+			jsonUser.put("avatar", user.getAvatar());
+			jsonUser.put("introduction", user.getIntroduction());
 			jsonUser.put("roleid", user.getRoles().get(0).getId());
 			jsonUser.put("role", user.getRoles().get(0).getRoleName());
 			jsonUserArray.add(jsonUser);
@@ -151,6 +155,24 @@ public class UserService implements IUserService{
 		resultJson.put("name", "name");
 		return ServerResponse.getInstance()
 				.responseEnum(ResponseEnum.GET_SUCCESS).data(resultJson);
+	}
+	
+	
+	@Override
+	public ServerResponse modifyUserInfo(User user) {
+		String userName = user.getUserName();
+		String avatar = user.getAvatar();
+		String introduction = user.getIntroduction();
+		User currentUser = userRepository.findByUserName(userName);
+		if (null != avatar && !"".equals(avatar)) {
+			currentUser.setAvatar(avatar);
+		}
+		if (null != introduction && !"".equals(introduction)) {
+			currentUser.setIntroduction(introduction);
+		}
+		userRepository.save(currentUser);
+		return ServerResponse.getInstance()
+				.responseEnum(ResponseEnum.UPDATE_SUCCESS);
 	}
 	
 }

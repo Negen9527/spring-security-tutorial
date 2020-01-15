@@ -13,7 +13,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 public class TokenUtil {
 	//密钥
-    public static final String SECRET = "sdjhakdhajdklsl;o653632";
+    public static final String SECRET = "asdfasdfafqwes2312`sdf;";
     //过期时间:秒
     public static final int EXPIRE = 5;
 
@@ -34,13 +34,13 @@ public class TokenUtil {
         map.put("typ", "JWT");
 
         String token = JWT.create()
-                .withHeader(map)//头
+                .withHeader(map)
                 .withClaim("userId", userId)
                 .withClaim("userName", userName)
-                .withSubject("测试")//
-                .withIssuedAt(new Date())//签名时间
-                .withExpiresAt(expireDate)//过期时间
-                .sign(Algorithm.HMAC256(SECRET));//签名
+                .withSubject("token")
+                .withIssuedAt(new Date())
+                .withExpiresAt(expireDate)
+                .sign(Algorithm.HMAC256(SECRET));
         return token;
     }
 
@@ -75,5 +75,8 @@ public class TokenUtil {
 	public static void main(String[] args) throws Exception {
 		String token = TokenUtil.createToken("111", "admin");
 		System.out.println(token);
+		Map<String, Claim> tokenResult = TokenUtil.verifyToken(token);
+		System.out.println(tokenResult.get("userId").asString());
+		System.out.println(tokenResult.get("userName").asString());
 	}
 }

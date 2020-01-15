@@ -1,6 +1,7 @@
 package com.negen.config;
 
 import java.io.IOException;
+import java.security.Principal;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +26,19 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import com.alibaba.fastjson.JSONObject;
 import com.negen.common.ResponseEnum;
 import com.negen.common.ServerResponse;
+import com.negen.entity.User;
+import com.negen.repository.UserRepository;
 import com.negen.service.impl.BookUserDetailsService;
 import com.negen.utils.PrintUtil;
+import com.negen.utils.TokenUtil;
 
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 	@Autowired
 	BookUserDetailsService bookUserDetailsService;
+	@Autowired
+	UserRepository userRepository;
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -73,12 +79,25 @@ public class BookWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapt
 
 	@Bean
 	public AuthenticationSuccessHandler authenticationSuccessHandler() {
+		//认证（登录）成功
 		return new AuthenticationSuccessHandler(){
 			@Override
 			public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 				Authentication authentication) throws IOException, ServletException {
 				JSONObject jsonData = new JSONObject();
-				jsonData.put("token", "token");
+				//生成token，写入数据库并返回给前端
+				String userName = authentication.getName();
+				User user = userRepository.findByUserName(userName);
+				String userId = Long.toString(user.getId());
+				String token = "";
+				try {
+					token = TokenUtil.createToken(userId, userName);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				user.setToken(token);
+				userRepository.save(user);
+				jsonData.put("token", token);
 				PrintUtil.print(response, 
 						ServerResponse.getInstance()
 						.responseEnum(ResponseEnum.LOGIN_SUCCESS).data(jsonData).toString());

@@ -103,4 +103,13 @@ public class UserController {
 					.responseEnum(ResponseEnum.INVALID_PARAM);
 		return userService.modifyUserPermission(userid, permissionNames);
 	}
+	
+	@ApiOperation(value = "修改用户信息")
+//	@PreAuthorize("hasAuthority('admin')")
+	@PostMapping(value = "/info/modify")
+	public ServerResponse modifyUserInfo(
+			@RequestBody User user) {
+		return userService.modifyUserInfo(user);
+	}
+	
 }
